@@ -1,0 +1,528 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { VT323 } from "next/font/google";
+import FadeIn from "./components/FadeIn";
+import StaggerFade from "./components/StaggerFade";
+import HudPanel from "./components/HudPanel";
+import TelemetryPanel from "./components/TelemetryPanel";
+import SpeedTrace from "./components/SpeedTrace";
+import SectorBestLapPanel from "./components/SectorBestLapPanel";
+import MechaFrame from "./components/MechaFrame";
+import MechaCard from "./components/MechaCard";
+import { SectionBgHud } from "./components/BackgroundHud";
+
+const vt323 = VT323({ weight: "400", subsets: ["latin"] });
+
+const projects = [
+  { title: "Race Highlight", category: "Sim Racing" },
+  { title: "Onboard Cinema", category: "GT Onboard" },
+  { title: "Driver Profile", category: "Karting" },
+];
+
+const verticalContent = [
+  { title: "Overtake Moments", category: "Instagram Reels" },
+  { title: "Pit Stop Drama", category: "YouTube Shorts" },
+  { title: "Driver Vibes", category: "TikTok" },
+];
+
+const services = [
+  { title: "Race Edits", description: "Cinematic highlights and aftermovies that capture every overtake, pit stop and podium moment.", icon: "🎬" },
+  { title: "Social Content", description: "Short-form edits optimized for Instagram Reels, YouTube Shorts and TikTok. Built to perform.", icon: "📱" },
+  { title: "Driver Profiles", description: "Personal brand videos for drivers and gentleman racers. Your story, your speed, your style.", icon: "🏁" },
+  { title: "Team Promos", description: "Promotional content for teams, sponsors and events. Premium visuals that attract partnerships.", icon: "🏆" },
+];
+
+const heroEditBayLines = [
+  { text: "TIMELINE::SYNCED", color: "purple" as const },
+  { text: "CODEC::H.265 READY", color: "dim" as const },
+  { text: "FPS::59.94 LOCKED", color: "purple" as const },
+];
+
+const heroCamFeedLines = [
+  { text: "CAM::ONBOARD-01", color: "dim" as const },
+  { text: "AUDIO::5.1 MAPPED", color: "cyan" as const },
+];
+
+const heroRaceCtrlLines = [
+  { text: "GRID::P1", color: "purple" as const },
+  { text: "SECTOR::PURPLE", color: "purple" as const },
+  { text: "TYRE::SOFT", color: "dim" as const },
+];
+
+const heroExportLines = [
+  { text: "RENDER::GPU ACTIVE", color: "dim" as const },
+  { text: "EXPORT::PRORES 4444", color: "cyan" as const },
+];
+
+export default function Home() {
+  const [heroParallax, setHeroParallax] = useState(0);
+  const [showVerticalContent, setShowVerticalContent] = useState(false);
+  const [videoMuted, setVideoMuted] = useState(true);
+  const [videoVolume, setVideoVolume] = useState(0.5);
+  const [screenOffset, setScreenOffset] = useState({ x: 0, y: 0 });
+  const [activeDrag, setActiveDrag] = useState<"screen" | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const dragOrigin = useRef({ mx: 0, my: 0, ox: 0, oy: 0 });
+  const heroRef = useRef<HTMLElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+
+  const MAX_GAIN = 3;
+
+  function ensureAudioCtx() {
+    const vid = videoRef.current;
+    if (!vid || audioCtxRef.current) return;
+    const ctx = new AudioContext();
+    const source = ctx.createMediaElementSource(vid);
+    const gain = ctx.createGain();
+    gain.gain.value = 0;
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    audioCtxRef.current = ctx;
+    gainRef.current = gain;
+  }
+
+  function toggleVideoSound() {
+    const vid = videoRef.current;
+    if (!vid) return;
+    ensureAudioCtx();
+    if (videoMuted) {
+      vid.muted = false;
+      if (gainRef.current) gainRef.current.gain.value = videoVolume * MAX_GAIN;
+      setVideoMuted(false);
+    } else {
+      if (gainRef.current) gainRef.current.gain.value = 0;
+      vid.muted = true;
+      setVideoMuted(true);
+    }
+  }
+
+  function startDrag(e: React.MouseEvent) {
+    dragOrigin.current = { mx: e.clientX, my: e.clientY, ox: screenOffset.x, oy: screenOffset.y };
+    setActiveDrag("screen");
+    e.preventDefault();
+  }
+
+  useEffect(() => {
+    if (!activeDrag) return;
+    function onMouseMove(e: MouseEvent) {
+      const hero = heroRef.current;
+      const maxX = hero ? hero.offsetWidth * 0.3 : 350;
+      const maxY = hero ? hero.offsetHeight * 0.25 : 180;
+      setScreenOffset({
+        x: Math.max(-maxX, Math.min(maxX, dragOrigin.current.ox + e.clientX - dragOrigin.current.mx)),
+        y: Math.max(-maxY, Math.min(maxY, dragOrigin.current.oy + e.clientY - dragOrigin.current.my)),
+      });
+    }
+    function onMouseUp() { setActiveDrag(null); }
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [activeDrag]);
+
+  function handleVideoVolume(v: number) {
+    const vid = videoRef.current;
+    setVideoVolume(v);
+    if (vid) {
+      vid.volume = v;
+      if (v === 0) { vid.muted = true; setVideoMuted(true); }
+      else { vid.muted = false; setVideoMuted(false); }
+    }
+  }
+
+  useEffect(() => {
+    if (showVerticalContent) {
+      document.body.classList.add("modal-open");
+    } else {
+      document.body.classList.remove("modal-open");
+    }
+    return () => document.body.classList.remove("modal-open");
+  }, [showVerticalContent]);
+
+  useEffect(() => {
+    function onScroll() {
+      const y = window.scrollY;
+      setHeroParallax(Math.min(y, 600));
+    }
+
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    function applyDepth() {
+      document.querySelectorAll<HTMLElement>("main > section").forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top >= 0) {
+          section.style.transform = "";
+          section.style.opacity = "";
+          return;
+        }
+        const progress = Math.min(Math.abs(rect.top) / (window.innerHeight * 0.75), 1);
+        const scale = (1 - progress * 0.1).toFixed(4);
+        const tz = (-progress * 160).toFixed(1);
+        const opacity = (1 - progress * 0.5).toFixed(4);
+        section.style.transform = `scale(${scale}) translateZ(${tz}px)`;
+        section.style.opacity = opacity;
+      });
+    }
+    window.addEventListener("scroll", applyDepth, { passive: true });
+    return () => window.removeEventListener("scroll", applyDepth);
+  }, []);
+
+  return (
+    <>
+    <main style={{ perspective: "1400px", perspectiveOrigin: "50% 0%" }}>
+      <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(229,0,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(229,0,255,0.03) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+
+      {/* Hero */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center pt-16">
+
+        {/* Background screen */}
+        <div
+          className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
+          style={{ transform: `translate3d(${screenOffset.x}px, ${heroParallax * 0.38 + screenOffset.y}px, 0)`, willChange: "transform" }}
+        >
+          {/* Stable wrapper — explicit width centers in flex, anchors absolute children */}
+          <div className="relative w-[75vw] max-w-5xl">
+            {/* Drag handle — top right, outside shake */}
+            <div
+              onMouseDown={startDrag}
+              className="absolute right-0 -top-7 z-20 flex items-center gap-1.5 px-2 py-1 border border-purple-primary/30 pointer-events-auto select-none"
+              style={{ cursor: activeDrag === "screen" ? "grabbing" : "grab" }}
+            >
+              <svg width="10" height="14" viewBox="0 0 10 14" fill="none" className="text-purple-primary/60">
+                <circle cx="2.5" cy="2.5" r="1.5" fill="currentColor"/><circle cx="7.5" cy="2.5" r="1.5" fill="currentColor"/>
+                <circle cx="2.5" cy="7" r="1.5" fill="currentColor"/><circle cx="7.5" cy="7" r="1.5" fill="currentColor"/>
+                <circle cx="2.5" cy="11.5" r="1.5" fill="currentColor"/><circle cx="7.5" cy="11.5" r="1.5" fill="currentColor"/>
+              </svg>
+              <span className="text-[9px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-purple-primary/50 uppercase">DRAG</span>
+            </div>
+            {/* Shake wrapper */}
+            <div className="hud-speed-shake-sm w-full">
+              <MechaFrame className="w-full">
+                <div className="absolute -top-6 left-0 font-mono text-[9px] tracking-[0.2em] text-purple-primary/50 uppercase z-10">CAM::RACE-FEED-01</div>
+                <div className="absolute -bottom-6 right-0 font-mono text-[9px] tracking-[0.2em] text-purple-primary/40 uppercase flex items-center gap-3 z-10">
+                  <span className="text-purple-primary/30 normal-case tracking-normal">© Rebellion Racing</span>
+                  REC ●
+                </div>
+                <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                  <div
+                    className="absolute inset-0 border border-purple-primary/25 z-10"
+                    style={{ boxShadow: "0 0 60px rgba(229,0,255,0.08) inset, 0 0 80px rgba(229,0,255,0.05)" }}
+                  />
+                  <video
+                    ref={videoRef}
+                    className="w-full h-full object-cover opacity-50"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    style={{ filter: "sepia(1) hue-rotate(220deg) saturate(2) brightness(0.55)" }}
+                  >
+                    <source src="/footage/gt3-onboard.mp4" type="video/mp4" />
+                  </video>
+                  <div className="absolute inset-0" style={{ background: "rgba(120,0,180,0.18)", mixBlendMode: "screen" }} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(12,4,24,0.55) 0%, rgba(12,4,24,0.05) 35%, rgba(12,4,24,0.05) 65%, rgba(12,4,24,0.65) 100%)" }} />
+                  <div className="absolute inset-0 pointer-events-none hud-crt-scanlines" />
+                  <div className="absolute inset-0 pointer-events-none hud-crt-flicker" />
+                  <div className="absolute inset-0 pointer-events-none hud-crt-sweep" />
+                  <div className="absolute inset-0 pointer-events-none opacity-20" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(229,0,255,0.08) 2px, rgba(229,0,255,0.08) 3px)" }} />
+                </div>
+              </MechaFrame>
+            </div>
+            {/* Audio controls */}
+            <div className="absolute left-0 top-full mt-2 flex items-center gap-3 pointer-events-auto">
+              <button
+                type="button"
+                onClick={toggleVideoSound}
+                className="px-2 py-1 leading-none text-[10px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer"
+              >
+                {videoMuted ? "SOUND ON" : "MUTE"}
+              </button>
+              <div className="flex items-center gap-1.5 pointer-events-auto">
+                <span className="text-[#d4bddf] text-xs">♪</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={videoMuted ? 0 : videoVolume}
+                  onChange={(e) => handleVideoVolume(Number(e.target.value))}
+                  aria-label="Video volume"
+                  className="w-20 hud-volume hud-volume-blink"
+                />
+              </div>
+            </div>
+            {/* Floor glow — anchored below screen */}
+            <div
+              className="absolute left-0 right-0 pointer-events-none"
+              style={{
+                top: "calc(100% - 10px)",
+                height: "80px",
+                background: "radial-gradient(ellipse 90% 100% at 50% 0%, rgba(229,0,255,0.6) 0%, rgba(229,0,255,0.2) 40%, transparent 70%)",
+                filter: "blur(16px)",
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Left panels — absolute, pushed to edge */}
+        <div
+          className="hidden md:flex flex-col gap-3 absolute left-[7%] top-[65%] -translate-y-1/2 z-10 w-40"
+          style={{ transform: `perspective(800px) rotateY(10deg) translate3d(0, calc(-50% + ${heroParallax * 0.08}px), 120px)`, transformOrigin: "right center", willChange: "transform" }}
+        >
+          <div className="hud-speed-shake flex flex-col gap-3">
+            <StaggerFade delay={400}><HudPanel label="EDIT BAY 01" lines={heroEditBayLines} /></StaggerFade>
+            <StaggerFade delay={700}><TelemetryPanel side="left" /></StaggerFade>
+            <StaggerFade delay={1000}><HudPanel label="CAM FEED" lines={heroCamFeedLines} className="border-purple-primary/10" /></StaggerFade>
+          </div>
+        </div>
+
+
+        {/* Right panels — absolute, pushed to edge */}
+        <div
+          className="hidden md:flex flex-col gap-3 absolute right-[7%] top-[72%] -translate-y-1/2 z-10 w-40"
+          style={{ transform: `perspective(800px) rotateY(-10deg) translate3d(0, calc(-50% + ${heroParallax * 0.08}px), 120px)`, transformOrigin: "left center", willChange: "transform" }}
+        >
+          <div className="hud-speed-shake flex flex-col gap-3">
+            <StaggerFade delay={400}><HudPanel label="RACE CTRL" align="right" lines={heroRaceCtrlLines} /></StaggerFade>
+            <StaggerFade delay={700}><TelemetryPanel side="right" /></StaggerFade>
+            <StaggerFade delay={1000}><HudPanel label="EXPORT" align="right" lines={heroExportLines} className="border-purple-primary/10" /></StaggerFade>
+          </div>
+        </div>
+
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6">
+          <div className="flex justify-center md:px-5">
+            <div
+              className="flex flex-col items-center justify-center py-10 md:py-0"
+              style={{ transform: `translate3d(0, ${heroParallax * 0.06}px, 0)`, willChange: "transform" }}
+            >
+              <StaggerFade delay={100}>
+                <div className="relative inline-block">
+                  <div className="absolute -top-3 -left-5 w-4 h-4 border-l border-t border-purple-primary/50" />
+                  <div className="absolute -top-3 -right-5 w-4 h-4 border-r border-t border-purple-primary/50" />
+                  <div className="absolute -bottom-3 -left-5 w-4 h-4 border-l border-b border-purple-primary/50" />
+                  <div className="absolute -bottom-3 -right-5 w-4 h-4 border-r border-b border-purple-primary/50" />
+                  <h1 className="text-5xl md:text-7xl font-[family-name:var(--font-audiowide)] tracking-tight -skew-x-6 px-6 py-2">
+                    purple<span className="text-purple-primary">Lap</span>
+                  </h1>
+                </div>
+              </StaggerFade>
+              <StaggerFade delay={300}><p className="mt-4 text-text-gray text-xs md:text-sm font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em]">Motorsport Media Management</p></StaggerFade>
+              <StaggerFade delay={500}><a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="inline-block mt-8 px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200 cursor-pointer">Get in Touch</a></StaggerFade>
+              <StaggerFade delay={900}>
+                <div className="mt-6 flex flex-col md:flex-row items-center gap-3">
+                  <SpeedTrace />
+                  <SectorBestLapPanel />
+                </div>
+              </StaggerFade>
+              <StaggerFade delay={1300}>
+                <a
+                  href="#showreel"
+                  onClick={(e) => { e.preventDefault(); document.getElementById("showreel")?.scrollIntoView({ behavior: "smooth" }); }}
+                  className="mt-4 inline-block border border-[#44ff8855] hover:border-[#44ff88] transition-colors duration-300 cursor-pointer"
+                  style={{ boxShadow: "0 0 8px rgba(68,255,136,0.1) inset, 0 0 20px rgba(68,255,136,0.08)" }}
+                >
+                  <span
+                    className="flex items-center gap-3 px-5 py-1.5 animate-pulse"
+                    style={{
+                      background: "linear-gradient(180deg, rgba(68,255,136,0.3), rgba(68,255,136,0.14))",
+                      boxShadow: "inset 0 0 10px rgba(68,255,136,0.32), 0 0 14px rgba(68,255,136,0.2)",
+                      animationDuration: "1.8s",
+                    }}
+                  >
+                    <span className={`${vt323.className} text-lg leading-none tracking-[0.2em] text-[#8affbc] [text-shadow:0_0_4px_rgba(138,255,188,0.35),0_1px_0_rgba(14,44,28,0.35)]`}>
+                      ALL SYSTEMS GO
+                    </span>
+                    <span className={`${vt323.className} text-lg leading-none text-[#8affbc] [text-shadow:0_0_4px_rgba(138,255,188,0.35),0_1px_0_rgba(14,44,28,0.35)]`}>
+                      -
+                    </span>
+                    <span className={`${vt323.className} text-lg leading-none tracking-[0.2em] text-[#8affbc] [text-shadow:0_0_4px_rgba(138,255,188,0.35),0_1px_0_rgba(14,44,28,0.35)]`}>
+                      START SHOWREEL WATCH
+                    </span>
+                  </span>
+                </a>
+              </StaggerFade>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Showreel */}
+      <section id="showreel" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="MAGI-01" lines={[{ text: "STATUS::ONLINE" }, { text: "SYNC::98.2%" }, { text: "LINK::STABLE" }]} verticalPosition="top" offset="6rem" />
+        <SectionBgHud side="right" label="BROADCAST" lines={[{ text: "FEED::LIVE" }, { text: "BITRATE::50MBPS" }, { text: "CODEC::H.265" }]} verticalPosition="bottom" offset="1rem" />
+        <FadeIn>
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-6">Showreel</h2>
+            <MechaFrame>
+              <div className="aspect-video bg-purple-primary/[0.02] border border-purple-primary/20 flex flex-col items-center justify-center" style={{ boxShadow: "0 0 20px rgba(229,0,255,0.05) inset" }}>
+                <div className="w-14 h-14 rounded-full border-2 border-purple-primary flex items-center justify-center mb-4" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.3)" }}>
+                  <div className="w-0 h-0 border-l-[14px] border-l-purple-primary border-t-[9px] border-t-transparent border-b-[9px] border-b-transparent ml-1" />
+                </div>
+                <span className="font-mono text-xs tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">COMING SOON</span>
+              </div>
+            </MechaFrame>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Work */}
+      <section id="work" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="LAP LOG" lines={[{ text: "LAP 41::1:32.441" }, { text: "LAP 42::1:31.998" }, { text: "LAP 43::1:32.205" }]} verticalPosition="top" offset="1rem" />
+        <SectionBgHud side="right" label="SECTOR TIME" lines={[{ text: "S1::23.847" }, { text: "S2::28.112" }, { text: "S3::25.908" }]} verticalPosition="bottom" offset="7rem" />
+        <FadeIn>
+          <div className="max-w-5xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Selected Work</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {projects.map((project, i) => (
+                <div key={i}>
+                  <div className="aspect-video bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center cursor-pointer group hover:border-purple-primary/40 transition-colors duration-300" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                    <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33] group-hover:opacity-0 transition-opacity">PLACEHOLDER</span>
+                    <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
+                    <span className="text-white text-sm font-semibold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">{project.title}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center mt-8">
+              <div className="relative inline-block group">
+                <div className="absolute -top-1.5 -left-1.5 w-2.5 h-2.5 border-l border-t border-purple-primary/50" />
+                <div className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 border-r border-t border-purple-primary/50" />
+                <div className="absolute -bottom-1.5 -left-1.5 w-2.5 h-2.5 border-l border-b border-purple-primary/50" />
+                <div className="absolute -bottom-1.5 -right-1.5 w-2.5 h-2.5 border-r border-b border-purple-primary/50" />
+                <button
+                  onClick={() => setShowVerticalContent(true)}
+                  className="flex items-center gap-2.5 px-5 py-2 leading-none text-[11px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer"
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-white animate-pulse group-hover:bg-purple-light transition-colors duration-200"
+                    style={{ boxShadow: "0 0 5px rgba(255,255,255,0.9), 0 0 12px rgba(255,255,255,0.45)" }}
+                  />
+                  Vertical Content
+                </button>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Modal Backdrop */}
+      {/* About */}
+      <section id="about" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="COLOR GRADE" lines={[{ text: "LUT::ARRI LOG-C" }, { text: "EXPOSURE::+0.3" }, { text: "WB::5600K" }]} verticalPosition="top" offset="8rem" />
+        <SectionBgHud side="right" label="AUDIO MIX" lines={[{ text: "LEVEL::-6dB" }, { text: "ENGINE::ISOLATED" }, { text: "SFX::MUTED" }]} verticalPosition="bottom" offset="1rem" />
+        <FadeIn>
+          <div className="max-w-4xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">About</h2>
+            <div className="flex flex-col md:flex-row gap-12 items-center">
+              <div className="relative shrink-0">
+                <div className="absolute -top-2 -left-2 w-4 h-4 border-l-2 border-t-2 border-purple-primary z-10" />
+                <div className="absolute -top-2 -right-2 w-4 h-4 border-r-2 border-t-2 border-purple-primary z-10" />
+                <div className="absolute -bottom-2 -left-2 w-4 h-4 border-l-2 border-b-2 border-purple-primary z-10" />
+                <div className="absolute -bottom-2 -right-2 w-4 h-4 border-r-2 border-b-2 border-purple-primary z-10" />
+                <div className="w-48 h-48 overflow-hidden border border-purple-primary/30" style={{ boxShadow: "0 0 20px rgba(229,0,255,0.15)" }}>
+                  <img src="/profile.png" alt="purpleLap" className="w-full h-full object-cover" />
+                </div>
+              </div>
+              <div>
+                <p className="text-text-gray leading-relaxed">purpleLap is a media management studio built for motorsport. From raw onboard footage to cinematic race edits, we craft visual content that captures the speed, precision and emotion of racing. Whether you are a gentleman driver, a GT team or a karting squad — we make your story look fast.</p>
+                <div className="flex flex-wrap gap-3 mt-6">
+                  {["Premiere Pro", "After Effects", "Blender", "F1 / GT / WEC / Karting"].map((tag) => (
+                    <span key={tag} className="text-xs px-3 py-1 border border-purple-primary/15 text-text-gray font-mono">{tag}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Services */}
+      <section id="services" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="RENDER QUEUE" lines={[{ text: "JOB 01::84%" }, { text: "JOB 02::PENDING" }, { text: "JOB 03::DONE" }]} verticalPosition="top" offset="1rem" />
+        <SectionBgHud side="right" label="STORAGE" lines={[{ text: "RAID::4.2TB FREE" }, { text: "ARCHIVE::STABLE" }, { text: "BACKUP::SYNCED" }]} verticalPosition="bottom" offset="9rem" />
+        <FadeIn>
+          <div className="max-w-6xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Services</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {services.map((service, i) => (
+                <div key={i} className="p-6 border border-purple-primary/10 bg-purple-primary/[0.02] hover:border-purple-primary/30 transition-colors duration-300" style={{ boxShadow: "0 0 10px rgba(229,0,255,0.03) inset" }}>
+                  <span className="text-3xl mb-4 block">{service.icon}</span>
+                  <h3 className="text-white text-lg font-semibold mb-2">{service.title}</h3>
+                  <p className="text-text-gray text-sm leading-relaxed">{service.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Contact */}
+      <section id="contact" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="UPLINK" lines={[{ text: "CHANNEL::SECURE" }, { text: "LATENCY::12ms" }]} verticalPosition="center" offset="5rem" />
+        <SectionBgHud side="right" label="INBOX" lines={[{ text: "MESSAGES::READY" }, { text: "PRIORITY::HIGH" }]} verticalPosition="center" offset="5rem" />
+        <FadeIn>
+          <div className="max-w-xl mx-auto text-center relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-4">Contact</h2>
+            <p className="text-text-gray mb-10">Have a project in mind? Let&apos;s talk.</p>
+            <a href="mailto:hello@purplelap.com" className="inline-block px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200">hello@purplelap.com</a>
+            <div className="flex justify-center gap-6 mt-10">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">Instagram</a>
+              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">YouTube</a>
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">X</a>
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+    </main>
+
+    {showVerticalContent && (
+      <div
+        className="modal-glitch-backdrop fixed inset-0 z-[100] backdrop-blur-sm bg-black/40 flex items-center justify-center p-4"
+        onClick={() => setShowVerticalContent(false)}
+      >
+        <div
+          className="modal-glitch-in relative border border-purple-primary/15 p-8 md:p-12 max-w-7xl w-full flex flex-col items-center max-h-[90vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            backgroundColor: "rgba(229, 0, 255, 0.02)",
+            boxShadow: "0 0 30px rgba(229,0,255,0.2), 0 0 20px rgba(229,0,255,0.05) inset"
+          }}
+        >
+          <button
+            onClick={() => setShowVerticalContent(false)}
+            className="absolute top-4 right-4 text-purple-primary hover:text-white transition-colors duration-200 text-2xl w-8 h-8 flex items-center justify-center"
+          >
+            ×
+          </button>
+          <h3 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">
+            Vertical Reels
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+            {verticalContent.map((project, i) => (
+              <div key={i} className="flex justify-center">
+                <div
+                  className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center cursor-pointer group hover:border-purple-primary/40 transition-colors duration-300 w-full min-h-[600px]"
+                  style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33] group-hover:opacity-0 transition-opacity">PLACEHOLDER</span>
+                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
+                  <span className="text-white text-sm font-semibold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">{project.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
+    </>
+  );
+}
