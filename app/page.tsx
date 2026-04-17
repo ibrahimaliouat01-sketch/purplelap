@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useGlitchSound } from "./hooks/useGlitchSound";
 import { VT323 } from "next/font/google";
 import FadeIn from "./components/FadeIn";
 import StaggerFade from "./components/StaggerFade";
@@ -56,6 +57,7 @@ const heroExportLines = [
 ];
 
 export default function Home() {
+  const playGlitch = useGlitchSound();
   const [heroParallax, setHeroParallax] = useState(0);
   const [showVerticalContent, setShowVerticalContent] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
@@ -68,7 +70,7 @@ export default function Home() {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainRef = useRef<GainNode | null>(null);
 
-  const MAX_GAIN = 3;
+  const MAX_GAIN = 6;
 
   function ensureAudioCtx() {
     const vid = videoRef.current;
@@ -127,10 +129,16 @@ export default function Home() {
   function handleVideoVolume(v: number) {
     const vid = videoRef.current;
     setVideoVolume(v);
-    if (vid) {
-      vid.volume = v;
-      if (v === 0) { vid.muted = true; setVideoMuted(true); }
-      else { vid.muted = false; setVideoMuted(false); }
+    if (!vid) return;
+    if (v === 0) {
+      if (gainRef.current) gainRef.current.gain.value = 0;
+      vid.muted = true;
+      setVideoMuted(true);
+    } else {
+      ensureAudioCtx();
+      vid.muted = false;
+      if (gainRef.current) gainRef.current.gain.value = v * MAX_GAIN;
+      setVideoMuted(false);
     }
   }
 
@@ -399,7 +407,7 @@ export default function Home() {
                 <div className="absolute -bottom-1.5 -left-1.5 w-2.5 h-2.5 border-l border-b border-purple-primary/50" />
                 <div className="absolute -bottom-1.5 -right-1.5 w-2.5 h-2.5 border-r border-b border-purple-primary/50" />
                 <button
-                  onClick={() => setShowVerticalContent(true)}
+                  onClick={() => { setShowVerticalContent(true); playGlitch(); }}
                   className="flex items-center gap-2.5 px-5 py-2 leading-none text-[11px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer"
                 >
                   <span

@@ -14,7 +14,7 @@ const NAVBAR_TRACK_SRC = "/audio/navbar-theme.mp3";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.25);
+  const [volume, setVolume] = useState(0.15);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("");
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -215,7 +215,7 @@ export default function Navbar() {
               <input
                 type="range"
                 min={0}
-                max={1}
+                max={0.5}
                 step={0.01}
                 value={volume}
                 onChange={(e) => setVolume(Number(e.target.value))}
