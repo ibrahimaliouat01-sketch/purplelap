@@ -143,6 +143,13 @@ export default function Home() {
   }
 
   useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+    vid.muted = true;
+    vid.play().catch(() => {});
+  }, []);
+
+  useEffect(() => {
     if (showVerticalContent) {
       document.body.classList.add("modal-open");
     } else {
