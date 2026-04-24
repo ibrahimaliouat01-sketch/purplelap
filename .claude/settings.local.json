@@ -4,7 +4,10 @@
       "Bash(python3 -c ' *)",
       "Bash(python3 -c \"import PIL\")",
       "Bash(pip3 install *)",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(git add *)"
     ]
   }
 }

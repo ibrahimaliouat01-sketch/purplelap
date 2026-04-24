@@ -10,7 +10,6 @@ import TelemetryPanel from "./components/TelemetryPanel";
 import SpeedTrace from "./components/SpeedTrace";
 import SectorBestLapPanel from "./components/SectorBestLapPanel";
 import MechaFrame from "./components/MechaFrame";
-import MechaCard from "./components/MechaCard";
 import { SectionBgHud } from "./components/BackgroundHud";
 
 const vt323 = VT323({ weight: "400", subsets: ["latin"] });
@@ -61,6 +60,7 @@ export default function Home() {
   const [heroParallax, setHeroParallax] = useState(0);
   const [showVerticalContent, setShowVerticalContent] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
+  const [videoPaused, setVideoPaused] = useState(true);
   const [videoVolume, setVideoVolume] = useState(0.5);
   const [screenOffset, setScreenOffset] = useState({ x: 0, y: 0 });
   const [activeDrag, setActiveDrag] = useState<"screen" | null>(null);
@@ -85,10 +85,23 @@ export default function Home() {
     gainRef.current = gain;
   }
 
+  function toggleVideoPlay() {
+    const vid = videoRef.current;
+    if (!vid) return;
+    if (vid.paused) {
+      vid.play().catch(() => {});
+      setVideoPaused(false);
+    } else {
+      vid.pause();
+      setVideoPaused(true);
+    }
+  }
+
   function toggleVideoSound() {
     const vid = videoRef.current;
     if (!vid) return;
     ensureAudioCtx();
+    if (vid.paused) vid.play().catch(() => {});
     if (videoMuted) {
       vid.muted = false;
       if (gainRef.current) gainRef.current.gain.value = videoVolume * MAX_GAIN;
@@ -142,12 +155,6 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {
-    const vid = videoRef.current;
-    if (!vid) return;
-    vid.muted = true;
-    vid.play().catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (showVerticalContent) {
@@ -234,13 +241,13 @@ export default function Home() {
                   <video
                     ref={videoRef}
                     className="w-full h-full object-cover opacity-50"
-                    autoPlay
                     loop
                     muted
                     playsInline
+                    preload="auto"
                     style={{ filter: "sepia(1) hue-rotate(220deg) saturate(2) brightness(0.55)" }}
                   >
-                    <source src="/footage/gt3-onboard.mp4" type="video/mp4" />
+                    <source src="/footage/gt3-onboard-compressed.mp4" type="video/mp4" />
                   </video>
                   <div className="absolute inset-0" style={{ background: "rgba(120,0,180,0.18)", mixBlendMode: "screen" }} />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(12,4,24,0.55) 0%, rgba(12,4,24,0.05) 35%, rgba(12,4,24,0.05) 65%, rgba(12,4,24,0.65) 100%)" }} />
@@ -251,12 +258,19 @@ export default function Home() {
                 </div>
               </MechaFrame>
             </div>
-            {/* Audio controls */}
+            {/* Video controls */}
             <div className="absolute left-0 top-full mt-2 flex items-center gap-3 pointer-events-auto">
               <button
                 type="button"
-                onClick={toggleVideoSound}
+                onClick={toggleVideoPlay}
                 className="px-2 py-1 leading-none text-[10px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer"
+              >
+                {videoPaused ? "▶ PLAY" : "⏸ PAUSE"}
+              </button>
+              <button
+                type="button"
+                onClick={toggleVideoSound}
+                className="w-[84px] h-[26px] px-2 leading-none text-[10px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer text-center"
               >
                 {videoMuted ? "SOUND ON" : "MUTE"}
               </button>
@@ -397,7 +411,18 @@ export default function Home() {
           <div className="max-w-5xl mx-auto relative z-10">
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Selected Work</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {projects.map((project, i) => (
+              <div>
+                <div className="aspect-video border border-purple-primary/15 overflow-hidden" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/W-khS9TuixM"
+                    title="Race Highlight"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+              </div>
+              {projects.slice(1).map((project, i) => (
                 <div key={i}>
                   <div className="aspect-video bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center cursor-pointer group hover:border-purple-primary/40 transition-colors duration-300" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
                     <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33] group-hover:opacity-0 transition-opacity">PLACEHOLDER</span>
