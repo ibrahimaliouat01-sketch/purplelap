@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useGlitchSound } from "./hooks/useGlitchSound";
 import { VT323 } from "next/font/google";
 import FadeIn from "./components/FadeIn";
 import StaggerFade from "./components/StaggerFade";
@@ -14,11 +13,6 @@ import { SectionBgHud } from "./components/BackgroundHud";
 
 const vt323 = VT323({ weight: "400", subsets: ["latin"] });
 
-const projects = [
-  { title: "Race Highlight", category: "Sim Racing" },
-  { title: "Onboard Cinema", category: "GT Onboard" },
-  { title: "Driver Profile", category: "Karting" },
-];
 
 const verticalContent = [
   { title: "Overtake Moments", category: "Instagram Reels" },
@@ -56,9 +50,9 @@ const heroExportLines = [
 ];
 
 export default function Home() {
-  const playGlitch = useGlitchSound();
   const [heroParallax, setHeroParallax] = useState(0);
-  const [showVerticalContent, setShowVerticalContent] = useState(false);
+  const [openSound, setOpenSound] = useState(false);
+  const [openCinematic, setOpenCinematic] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
   const [videoPaused, setVideoPaused] = useState(true);
   const [videoVolume, setVideoVolume] = useState(0.5);
@@ -156,14 +150,6 @@ export default function Home() {
   }
 
 
-  useEffect(() => {
-    if (showVerticalContent) {
-      document.body.classList.add("modal-open");
-    } else {
-      document.body.classList.remove("modal-open");
-    }
-    return () => document.body.classList.remove("modal-open");
-  }, [showVerticalContent]);
 
   useEffect(() => {
     function onScroll() {
@@ -345,7 +331,7 @@ export default function Home() {
                 </div>
               </StaggerFade>
               <StaggerFade delay={300}><p className="mt-4 text-text-gray text-xs md:text-sm font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em]">Motorsport Media Management</p></StaggerFade>
-              <StaggerFade delay={500}><a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="inline-block mt-8 px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200 cursor-pointer">Get in Touch</a></StaggerFade>
+              <StaggerFade delay={500}><a href="#contact" onClick={(e) => { e.preventDefault(); document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }); }} className="inline-block mt-8 px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200 cursor-pointer">Work with us</a></StaggerFade>
               <StaggerFade delay={900}>
                 <div className="mt-6 flex flex-col md:flex-row items-center gap-3">
                   <SpeedTrace />
@@ -384,6 +370,125 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Work */}
+      <section id="work" className="py-24 px-6 relative">
+        <SectionBgHud side="left" label="LAP LOG" lines={[{ text: "LAP 41::1:32.441" }, { text: "LAP 42::1:31.998" }, { text: "LAP 43::1:32.205" }]} verticalPosition="top" offset="1rem" />
+        <SectionBgHud side="right" label="SECTOR TIME" lines={[{ text: "S1::23.847" }, { text: "S2::28.112" }, { text: "S3::25.908" }]} verticalPosition="bottom" offset="7rem" />
+        <FadeIn>
+          <div className="max-w-5xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Selected Work</h2>
+
+            {/* Video cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Sound Design */}
+              <div className="flex flex-col gap-4">
+                <p className="font-mono text-[10px] tracking-widest text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] uppercase">Sound Design</p>
+                <div className="aspect-video border border-purple-primary/15 overflow-hidden" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.06) inset" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/csscOwQ-cqo"
+                    title="Sound Design"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+                <p className="text-purple-primary/30 font-mono text-[9px] text-right">© Porsche Motorsports</p>
+                <button
+                  onClick={() => setOpenSound(!openSound)}
+                  className="flex items-center gap-2 text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.2em] text-purple-primary/60 hover:text-purple-primary transition-colors duration-200 cursor-pointer"
+                >
+                  <span className="transition-transform duration-300" style={{ transform: openSound ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+                  Process
+                </button>
+                <div
+                  className="overflow-hidden transition-all duration-500"
+                  style={{ maxHeight: openSound ? "600px" : "0px", opacity: openSound ? 1 : 0 }}
+                >
+                  <div className="border-t border-purple-primary/10 pt-4">
+                    <p className="text-text-gray text-sm leading-relaxed">
+                      As a big fan of the Porsche brand and Porsche racing cars, I decided to remake all of the sound design for one of their promo clips showcasing the incredible race they have had in 2025 at the 24 Hours of Le Mans. I thought the sound design of the original promo clip, <span className="text-[#d4bddf] italic">"One step closer to infinity | Porsche 963 at the 24 Hours of Le Mans 2025"</span> was technically good but lacked acute knowledge of the way a race works. For example at the beginning of the original video clip you can clearly hear the same AI voice acting as a race engineer and the race director at the same time. The kind of details a true motorsport fan immediately notice and that can make all the difference.
+                      <br /><br />
+                      I believe with this remake, that I managed to really capture all of the vibes and emotions which come with endurance racing, thus highlighting the importance of good sound design in a piece of motorsports related work and above all how important it is to have true passionate people to handle the creative process behind a racing organisation.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cinematic Edits */}
+              <div className="flex flex-col gap-4">
+                <p className="font-mono text-[10px] tracking-widest text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] uppercase">Cinematic Edits</p>
+                <div className="aspect-video border border-purple-primary/15 overflow-hidden" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.06) inset" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/P5LopBCu_BI"
+                    title="Cinematic Edits"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  />
+                </div>
+                <button
+                  onClick={() => setOpenCinematic(!openCinematic)}
+                  className="flex items-center gap-2 text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.2em] text-purple-primary/60 hover:text-purple-primary transition-colors duration-200 cursor-pointer"
+                >
+                  <span className="transition-transform duration-300" style={{ transform: openCinematic ? "rotate(90deg)" : "rotate(0deg)" }}>▶</span>
+                  About
+                </button>
+                <div
+                  className="overflow-hidden transition-all duration-500"
+                  style={{ maxHeight: openCinematic ? "400px" : "0px", opacity: openCinematic ? 1 : 0 }}
+                >
+                  <div className="border-t border-purple-primary/10 pt-4">
+                    <p className="text-text-gray text-sm leading-relaxed">
+                      A song will suffice — I love Ferrari, a love maybe irrational but it never quite is. In this short cinematic edit, we wanted to pay hommage to one of if not the most iconic car brand in the world. We browsed through hours of footage to find the picture perfect frames we wanted to showcase, and added a slight nostalgic touch with the visual effects.
+                      <br /><br />
+                      <span className="text-[#d4bddf]">PS :</span> I love the 458 Speciale
+                      <br />
+                      <span className="text-[#d4bddf]">PS2 :</span> Footage seen in the video doesn&apos;t belong to us, all credit goes to the original owners.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* Vertical Content */}
+      <section className="py-24 px-6 relative">
+        <FadeIn>
+          <div className="max-w-5xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Vertical Content</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Reel Instagram */}
+              <div className="flex justify-center">
+                <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/yjfGwduC1DA"
+                    title="Vertical Content"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                </div>
+              </div>
+              {verticalContent.slice(1).map((project, i) => (
+                <div key={i} className="flex justify-center">
+                  <div
+                    className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center w-full"
+                    style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
+                  >
+                    <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
+                    <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
+                    <span className="text-white text-sm font-semibold mt-1">{project.title}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
       {/* Showreel */}
       <section id="showreel" className="py-24 px-6 relative">
         <SectionBgHud side="left" label="MAGI-01" lines={[{ text: "STATUS::ONLINE" }, { text: "SYNC::98.2%" }, { text: "LINK::STABLE" }]} verticalPosition="top" offset="6rem" />
@@ -403,57 +508,6 @@ export default function Home() {
         </FadeIn>
       </section>
 
-      {/* Work */}
-      <section id="work" className="py-24 px-6 relative">
-        <SectionBgHud side="left" label="LAP LOG" lines={[{ text: "LAP 41::1:32.441" }, { text: "LAP 42::1:31.998" }, { text: "LAP 43::1:32.205" }]} verticalPosition="top" offset="1rem" />
-        <SectionBgHud side="right" label="SECTOR TIME" lines={[{ text: "S1::23.847" }, { text: "S2::28.112" }, { text: "S3::25.908" }]} verticalPosition="bottom" offset="7rem" />
-        <FadeIn>
-          <div className="max-w-5xl mx-auto relative z-10">
-            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Selected Work</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              <div>
-                <div className="aspect-video border border-purple-primary/15 overflow-hidden" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
-                  <iframe
-                    src="https://www.youtube.com/embed/W-khS9TuixM"
-                    title="Race Highlight"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full"
-                  />
-                </div>
-              </div>
-              {projects.slice(1).map((project, i) => (
-                <div key={i}>
-                  <div className="aspect-video bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center cursor-pointer group hover:border-purple-primary/40 transition-colors duration-300" style={{ boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
-                    <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33] group-hover:opacity-0 transition-opacity">PLACEHOLDER</span>
-                    <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
-                    <span className="text-white text-sm font-semibold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">{project.title}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-center mt-8">
-              <div className="relative inline-block group">
-                <div className="absolute -top-1.5 -left-1.5 w-2.5 h-2.5 border-l border-t border-purple-primary/50" />
-                <div className="absolute -top-1.5 -right-1.5 w-2.5 h-2.5 border-r border-t border-purple-primary/50" />
-                <div className="absolute -bottom-1.5 -left-1.5 w-2.5 h-2.5 border-l border-b border-purple-primary/50" />
-                <div className="absolute -bottom-1.5 -right-1.5 w-2.5 h-2.5 border-r border-b border-purple-primary/50" />
-                <button
-                  onClick={() => { setShowVerticalContent(true); playGlitch(); }}
-                  className="flex items-center gap-2.5 px-5 py-2 leading-none text-[11px] font-[family-name:var(--font-orbitron)] tracking-[0.15em] text-white border border-purple-primary/30 uppercase cursor-pointer"
-                >
-                  <span
-                    className="w-1.5 h-1.5 rounded-full bg-white animate-pulse group-hover:bg-purple-light transition-colors duration-200"
-                    style={{ boxShadow: "0 0 5px rgba(255,255,255,0.9), 0 0 12px rgba(255,255,255,0.45)" }}
-                  />
-                  Vertical Content
-                </button>
-              </div>
-            </div>
-          </div>
-        </FadeIn>
-      </section>
-
       {/* Modal Backdrop */}
       {/* About */}
       <section id="about" className="py-24 px-6 relative">
@@ -461,7 +515,7 @@ export default function Home() {
         <SectionBgHud side="right" label="AUDIO MIX" lines={[{ text: "LEVEL::-6dB" }, { text: "ENGINE::ISOLATED" }, { text: "SFX::MUTED" }]} verticalPosition="bottom" offset="1rem" />
         <FadeIn>
           <div className="max-w-4xl mx-auto relative z-10">
-            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">About</h2>
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Who we are</h2>
             <div className="flex flex-col md:flex-row gap-12 items-center">
               <div className="relative shrink-0">
                 <div className="absolute -top-2 -left-2 w-4 h-4 border-l-2 border-t-2 border-purple-primary z-10" />
@@ -473,7 +527,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <p className="text-text-gray leading-relaxed">purpleLap is a media management studio built for motorsport. From raw onboard footage to cinematic race edits, we craft visual content that captures the speed, precision and emotion of racing. Whether you are a gentleman driver, a GT team or a karting squad — we make your story look fast.</p>
+                <p className="text-text-gray leading-relaxed">purpleLap is a media management studio built for motorsport. From raw onboard footage to cinematic race edits, we craft visual content that captures the speed, precision and emotion of racing. Our pledge : to help drivers and organisations thrive and do what they do best by allowing them not to worry about the media side of things anymore, and entrusting all of the heavy processes that go behind media management to seasoned professionals.</p>
                 <div className="flex flex-wrap gap-3 mt-6">
                   {["Premiere Pro", "After Effects", "Blender", "F1 / GT / WEC / Karting"].map((tag) => (
                     <span key={tag} className="text-xs px-3 py-1 border border-purple-primary/15 text-text-gray font-mono">{tag}</span>
@@ -513,56 +567,16 @@ export default function Home() {
           <div className="max-w-xl mx-auto text-center relative z-10">
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-4">Contact</h2>
             <p className="text-text-gray mb-10">Have a project in mind? Let&apos;s talk.</p>
-            <a href="mailto:hello@purplelap.com" className="inline-block px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200">hello@purplelap.com</a>
+            <a href="mailto:purplelapmedia@proton.me" className="inline-block px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200">purplelapmedia@proton.me</a>
             <div className="flex justify-center gap-6 mt-10">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">Instagram</a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">YouTube</a>
-              <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">X</a>
+              <a href="https://www.instagram.com/purplelap.media/" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">Instagram</a>
+              <a href="https://www.youtube.com/@purpleLapMedia" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">YouTube</a>
             </div>
           </div>
         </FadeIn>
       </section>
     </main>
 
-    {showVerticalContent && (
-      <div
-        className="modal-glitch-backdrop fixed inset-0 z-[100] backdrop-blur-sm bg-black/40 flex items-center justify-center p-4"
-        onClick={() => setShowVerticalContent(false)}
-      >
-        <div
-          className="modal-glitch-in relative border border-purple-primary/15 p-8 md:p-12 max-w-7xl w-full flex flex-col items-center max-h-[90vh] overflow-y-auto"
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            backgroundColor: "rgba(229, 0, 255, 0.02)",
-            boxShadow: "0 0 30px rgba(229,0,255,0.2), 0 0 20px rgba(229,0,255,0.05) inset"
-          }}
-        >
-          <button
-            onClick={() => setShowVerticalContent(false)}
-            className="absolute top-4 right-4 text-purple-primary hover:text-white transition-colors duration-200 text-2xl w-8 h-8 flex items-center justify-center"
-          >
-            ×
-          </button>
-          <h3 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">
-            Vertical Reels
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
-            {verticalContent.map((project, i) => (
-              <div key={i} className="flex justify-center">
-                <div
-                  className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center cursor-pointer group hover:border-purple-primary/40 transition-colors duration-300 w-full min-h-[600px]"
-                  style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
-                >
-                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33] group-hover:opacity-0 transition-opacity">PLACEHOLDER</span>
-                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
-                  <span className="text-white text-sm font-semibold mt-1 opacity-0 group-hover:opacity-100 transition-opacity">{project.title}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )}
     </>
   );
 }

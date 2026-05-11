@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Audiowide, Orbitron } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import BackgroundHud from "./components/BackgroundHud";
+import ClientLayoutWrapper from "./components/ClientLayoutWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -59,10 +57,9 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
       <body className="bg-[#0c0418] text-white font-sans antialiased">
-        <Navbar />
-        <BackgroundHud />
-        {children}
-        <Footer />
+        <ClientLayoutWrapper>
+          {children}
+        </ClientLayoutWrapper>
       </body>
     </html>
   );
