@@ -14,11 +14,6 @@ import { SectionBgHud } from "./components/BackgroundHud";
 const vt323 = VT323({ weight: "400", subsets: ["latin"] });
 
 
-const verticalContent = [
-  { title: "Overtake Moments", category: "Instagram Reels" },
-  { title: "Pit Stop Drama", category: "YouTube Shorts" },
-  { title: "Driver Vibes", category: "TikTok" },
-];
 
 const services = [
   { title: "Race Edits", description: "Cinematic highlights and aftermovies that capture every overtake, pit stop and podium moment.", icon: "🎬" },
@@ -472,18 +467,29 @@ export default function Home() {
                   />
                 </div>
               </div>
-              {verticalContent.slice(1).map((project, i) => (
-                <div key={i} className="flex justify-center">
-                  <div
-                    className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center w-full"
-                    style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
-                  >
-                    <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
-                    <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">{project.category}</span>
-                    <span className="text-white text-sm font-semibold mt-1">{project.title}</span>
-                  </div>
+              {/* Middle card — YouTube Short */}
+              <div className="flex justify-center">
+                <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                  <iframe
+                    src="https://www.youtube.com/embed/djHhfoEFZco"
+                    title="Vertical Content"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
                 </div>
-              ))}
+              </div>
+              {/* Right card — placeholder */}
+              <div className="flex justify-center">
+                <div
+                  className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center w-full"
+                  style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
+                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">TikTok</span>
+                  <span className="text-white text-sm font-semibold mt-1">Driver Vibes</span>
+                </div>
+              </div>
             </div>
           </div>
         </FadeIn>
