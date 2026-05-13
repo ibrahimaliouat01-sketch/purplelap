@@ -454,40 +454,41 @@ export default function Home() {
         <FadeIn>
           <div className="max-w-5xl mx-auto relative z-10">
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Vertical Content</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Reel Instagram */}
+            <div className="flex flex-col gap-10">
+              {/* Instagram post — full row above */}
               <div className="flex justify-center">
-                <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                <div className="border border-purple-primary/15 overflow-hidden" style={{ width: "320px", aspectRatio: "4/5", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
                   <iframe
-                    src="https://www.youtube.com/embed/yjfGwduC1DA"
-                    title="Vertical Content"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    src="https://www.instagram.com/p/DYRkRBuxkpc/embed/"
+                    title="Instagram Post"
                     allowFullScreen
                     className="w-full h-full border-0"
                   />
                 </div>
               </div>
-              {/* Middle card — YouTube Short */}
-              <div className="flex justify-center">
-                <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
-                  <iframe
-                    src="https://www.youtube.com/embed/djHhfoEFZco"
-                    title="Vertical Content"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full border-0"
-                  />
+              {/* YouTube Shorts row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto w-full">
+                <div className="flex justify-center">
+                  <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                    <iframe
+                      src="https://www.youtube.com/embed/yjfGwduC1DA"
+                      title="Vertical Content"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  </div>
                 </div>
-              </div>
-              {/* Right card — placeholder */}
-              <div className="flex justify-center">
-                <div
-                  className="bg-purple-primary/[0.02] border border-purple-primary/15 flex flex-col items-center justify-center w-full"
-                  style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
-                >
-                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
-                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-2">TikTok</span>
-                  <span className="text-white text-sm font-semibold mt-1">Driver Vibes</span>
+                <div className="flex justify-center">
+                  <div className="border border-purple-primary/15 overflow-hidden w-full" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                    <iframe
+                      src="https://www.youtube.com/embed/djHhfoEFZco"
+                      title="Vertical Content"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
