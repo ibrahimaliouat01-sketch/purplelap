@@ -457,10 +457,11 @@ export default function Home() {
             <div className="flex flex-col gap-10">
               {/* Instagram post — full row above */}
               <div className="flex justify-center">
-                <div className="border border-purple-primary/15 overflow-hidden" style={{ width: "320px", aspectRatio: "4/5", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                <div className="border border-purple-primary/15 overflow-hidden w-full max-w-md" style={{ aspectRatio: "4/5", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
                   <iframe
                     src="https://www.instagram.com/p/DYRkRBuxkpc/embed/"
                     title="Instagram Post"
+                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                     allowFullScreen
                     className="w-full h-full border-0"
                   />
