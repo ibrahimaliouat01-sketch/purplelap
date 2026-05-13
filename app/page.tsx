@@ -455,13 +455,13 @@ export default function Home() {
           <div className="max-w-5xl mx-auto relative z-10">
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Vertical Content</h2>
             <div className="flex flex-col gap-10">
-              {/* Instagram post — full row above */}
+              {/* Top card — YouTube Short */}
               <div className="flex justify-center">
-                <div className="border border-purple-primary/15 overflow-hidden w-full max-w-md" style={{ aspectRatio: "4/5", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
+                <div className="border border-purple-primary/15 overflow-hidden w-full max-w-xs" style={{ aspectRatio: "9/16", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}>
                   <iframe
-                    src="https://www.instagram.com/p/DYRkRBuxkpc/embed/"
-                    title="Instagram Post"
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                    src="https://www.youtube.com/embed/3xqiWW8anxQ"
+                    title="Vertical Content"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     className="w-full h-full border-0"
                   />
