@@ -143,7 +143,7 @@ export default function Navbar() {
                 purple<span className="text-purple-primary" style={{ textShadow: "0 0 8px rgba(229,0,255,0.65)", transition: "text-shadow 0.6s ease" }}>Lap</span>
               </a>
             </div>
-            <img src="/mascot.png" alt="" className="w-11 h-11 object-contain opacity-90 ml-1 shrink-0" />
+            <img src="/favicon.png" alt="" className="w-11 h-11 object-contain opacity-90 ml-1 shrink-0" />
           </div>
 
           {/* Liens desktop */}
