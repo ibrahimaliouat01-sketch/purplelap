@@ -125,7 +125,7 @@ export default function Navbar() {
         <div className="absolute inset-0 z-[9] pointer-events-none hud-crt-sweep" />
         <div className="absolute inset-0 z-10 pointer-events-none opacity-20" style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(229,0,255,0.08) 2px, rgba(229,0,255,0.08) 3px)" }} />
 
-        <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-stretch justify-between relative">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-stretch justify-between relative z-[20]">
           {/* Logo plaque */}
           <div
             className="relative pr-4 md:pr-6 h-full px-4 flex items-center self-stretch"
