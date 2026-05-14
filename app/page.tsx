@@ -449,6 +449,27 @@ export default function Home() {
         </FadeIn>
       </section>
 
+      {/* Thumbnails */}
+      <section id="thumbnails" className="py-24 px-6 relative">
+        <FadeIn>
+          <div className="max-w-5xl mx-auto relative z-10">
+            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Thumbnails</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="border border-purple-primary/15 overflow-hidden w-full bg-purple-primary/[0.02] flex flex-col items-center justify-center"
+                  style={{ aspectRatio: "16/9", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
+                >
+                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
+                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-1">THUMBNAIL {i}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
       {/* Vertical Content */}
       <section className="py-24 px-6 relative">
         <FadeIn>
@@ -492,27 +513,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </FadeIn>
-      </section>
-
-      {/* Thumbnails */}
-      <section id="thumbnails" className="py-24 px-6 relative">
-        <FadeIn>
-          <div className="max-w-5xl mx-auto relative z-10">
-            <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Thumbnails</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <div
-                  key={i}
-                  className="border border-purple-primary/15 overflow-hidden w-full bg-purple-primary/[0.02] flex flex-col items-center justify-center"
-                  style={{ aspectRatio: "16/9", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
-                >
-                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
-                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-1">THUMBNAIL {i}</span>
-                </div>
-              ))}
             </div>
           </div>
         </FadeIn>
