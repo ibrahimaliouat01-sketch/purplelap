@@ -458,11 +458,14 @@ export default function Home() {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="border border-purple-primary/15 overflow-hidden w-full bg-purple-primary/[0.02] flex flex-col items-center justify-center"
+                  className="border border-purple-primary/15 overflow-hidden w-full"
                   style={{ aspectRatio: "16/9", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
                 >
-                  <span className="font-mono text-[10px] tracking-widest text-[#bb99cc] [text-shadow:0_0_4px_#e500ff33]">PLACEHOLDER</span>
-                  <span className="font-mono text-[10px] tracking-wider text-[#ff44ff] [text-shadow:0_0_6px_#e500ff88] mt-1">THUMBNAIL {i}</span>
+                  <img
+                    src={`/thumbnail${i}.jpg`}
+                    alt={`Thumbnail ${i}`}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>
