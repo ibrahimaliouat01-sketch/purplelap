@@ -46,6 +46,7 @@ const heroExportLines = [
 
 export default function Home() {
   const [heroParallax, setHeroParallax] = useState(0);
+  const [selectedThumb, setSelectedThumb] = useState<number | null>(null);
   const [openSound, setOpenSound] = useState(false);
   const [openCinematic, setOpenCinematic] = useState(false);
   const [videoMuted, setVideoMuted] = useState(true);
@@ -178,8 +179,37 @@ export default function Home() {
     return () => window.removeEventListener("scroll", applyDepth);
   }, []);
 
+  useEffect(() => {
+    if (selectedThumb !== null) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [selectedThumb]);
+
   return (
     <>
+    {/* Lightbox */}
+    {selectedThumb !== null && (
+      <div
+        className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+        onClick={() => setSelectedThumb(null)}
+      >
+        <button
+          className="absolute top-5 right-6 text-white/60 hover:text-white font-[family-name:var(--font-orbitron)] text-xs tracking-widest transition-colors"
+          onClick={() => setSelectedThumb(null)}
+        >
+          ✕ CLOSE
+        </button>
+        <img
+          src={`/thumbnail${selectedThumb}.jpg`}
+          alt={`Thumbnail ${selectedThumb}`}
+          className="max-w-[92vw] max-h-[92vh] object-contain"
+          onClick={(e) => e.stopPropagation()}
+        />
+      </div>
+    )}
     <main style={{ perspective: "1400px", perspectiveOrigin: "50% 0%" }}>
       <div className="fixed inset-0 z-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(229,0,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(229,0,255,0.03) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
 
@@ -456,17 +486,24 @@ export default function Home() {
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-12 text-center">Thumbnails</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[1, 2, 3].map((i) => (
-                <div
+                <button
                   key={i}
-                  className="border border-purple-primary/15 overflow-hidden w-full"
+                  type="button"
+                  className="border border-purple-primary/15 overflow-hidden w-full group relative cursor-pointer"
                   style={{ aspectRatio: "16/9", boxShadow: "0 0 12px rgba(229,0,255,0.03) inset" }}
+                  onClick={() => setSelectedThumb(i)}
                 >
                   <img
                     src={`/thumbnail${i}.jpg`}
                     alt={`Thumbnail ${i}`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-[family-name:var(--font-orbitron)] text-[10px] tracking-widest text-white border border-white/40 px-3 py-1.5">
+                      VIEW
+                    </span>
+                  </div>
+                </button>
               ))}
             </div>
           </div>
