@@ -127,21 +127,23 @@ export default function Navbar() {
 
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 flex items-stretch justify-between relative z-[20]">
           {/* Logo plaque */}
-          <div
-            className="relative pr-4 md:pr-6 h-full px-4 flex items-center self-stretch"
-            style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 42%, calc(100% - 6px) 100%, 0 100%, 9px 52%)" }}
-          >
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-              className="flex items-center h-full -translate-y-[1px] leading-none text-lg md:text-xl font-[family-name:var(--font-audiowide)] tracking-tight -skew-x-6 text-white cursor-pointer"
-              style={{ textShadow: "0 0 6px rgba(255,255,255,0.35)", transition: "text-shadow 0.6s ease, filter 0.6s ease" }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "drop-shadow(0 0 8px rgba(229,0,255,0.5))"; }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = ""; }}
+          <div className="relative h-full flex items-center self-stretch">
+            <div
+              className="h-full px-4 pr-2 flex items-center"
+              style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 42%, calc(100% - 6px) 100%, 0 100%, 9px 52%)" }}
             >
-              purple<span className="text-purple-primary" style={{ textShadow: "0 0 8px rgba(229,0,255,0.65)", transition: "text-shadow 0.6s ease" }}>Lap</span>
-              <img src="/favicon.png" alt="" className="w-11 h-11 object-contain opacity-85 skew-x-6 ml-2" />
-            </a>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                className="flex items-center h-full -translate-y-[1px] leading-none text-lg md:text-xl font-[family-name:var(--font-audiowide)] tracking-tight -skew-x-6 text-white cursor-pointer"
+                style={{ textShadow: "0 0 6px rgba(255,255,255,0.35)", transition: "text-shadow 0.6s ease, filter 0.6s ease" }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.filter = "drop-shadow(0 0 8px rgba(229,0,255,0.5))"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.filter = ""; }}
+              >
+                purple<span className="text-purple-primary" style={{ textShadow: "0 0 8px rgba(229,0,255,0.65)", transition: "text-shadow 0.6s ease" }}>Lap</span>
+              </a>
+            </div>
+            <img src="/favicon.png" alt="" className="w-11 h-11 object-contain opacity-90 ml-1 shrink-0" />
           </div>
 
           {/* Liens desktop */}
