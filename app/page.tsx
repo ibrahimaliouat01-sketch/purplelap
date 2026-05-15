@@ -636,6 +636,8 @@ export default function Home() {
           <div className="max-w-xl mx-auto text-center relative z-10">
             <h2 className="text-xs font-[family-name:var(--font-orbitron)] uppercase tracking-[0.3em] text-purple-primary mb-4">Contact</h2>
             <p className="text-text-gray mb-10">Have a project in mind? Let&apos;s talk.</p>
+            <a href="https://wa.me/33767458917" target="_blank" rel="noopener noreferrer" className="inline-block px-8 py-3 border border-purple-primary/50 text-purple-primary/80 text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white hover:border-purple-primary transition-all duration-200 mb-4">WhatsApp +33 7 67 45 89 17</a>
+            <br />
             <a href="mailto:purplelapmedia@proton.me" className="inline-block px-8 py-3 border border-purple-primary text-purple-primary text-xs font-mono uppercase tracking-widest hover:bg-purple-primary hover:text-white transition-all duration-200">purplelapmedia@proton.me</a>
             <div className="flex justify-center gap-6 mt-10">
               <a href="https://www.instagram.com/purplelap.media/" target="_blank" rel="noopener noreferrer" className="text-text-gray hover:text-purple-primary transition-colors duration-200 font-mono text-sm">Instagram</a>
