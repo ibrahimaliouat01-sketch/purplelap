@@ -218,7 +218,7 @@ export default function Home() {
 
         {/* Background screen */}
         <div
-          className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
+          className="hidden md:flex absolute inset-0 items-center justify-center z-0 pointer-events-none"
           style={{ transform: `translate3d(${screenOffset.x}px, ${heroParallax * 0.38 + screenOffset.y}px, 0)`, willChange: "transform" }}
         >
           {/* Stable wrapper — explicit width centers in flex, anchors absolute children */}
